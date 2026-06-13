@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: #F8F7FF;
+            color: #1E1B2E;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 620px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 48px 44px;
+            box-shadow:
+                0 2px 4px rgba(99, 83, 210, 0.06),
+                0 8px 24px rgba(99, 83, 210, 0.10),
+                0 24px 48px rgba(99, 83, 210, 0.07);
+            border: 1px solid rgba(99, 83, 210, 0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #EEF0FF;
+            color: #5B4FCF;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .badge::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            background: #7C6EE0;
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1E1B2E;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        h1 span {
+            color: #6353D2;
+        }
+
+        .subtitle {
+            font-size: 14.5px;
+            color: #6B6685;
+            line-height: 1.6;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #E2DFF5, transparent);
+            margin: 28px 0;
+        }
+
+        #Summarization-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .field-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3E3660;
+            letter-spacing: 0.01em;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 14px 16px;
+            border: 1.5px solid #D8D5F0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14.5px;
+            color: #1E1B2E;
+            background: #FAFAFE;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            line-height: 1.6;
+        }
+
+        textarea::placeholder {
+            color: #AAA5C4;
+        }
+
+        textarea:focus {
+            border-color: #6353D2;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(99, 83, 210, 0.12);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background: #6353D2;
+            color: #ffffff;
+            border: none;
+            padding: 13px 24px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 14px rgba(99, 83, 210, 0.30);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button[type="submit"]::after {
+            content: '→';
+            font-size: 16px;
+        }
+
+        button[type="submit"]:hover {
+            background: #5244BC;
+            box-shadow: 0 6px 20px rgba(99, 83, 210, 0.38);
+            transform: translateY(-1px);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(99, 83, 210, 0.25);
+        }
+
+        button[type="submit"]:disabled {
+            background: #9E95D8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .summary-output {
+            margin-top: 28px;
+            background: #F4F2FF;
+            border: 1.5px solid #D4CFEE;
+            border-radius: 12px;
+            padding: 20px 22px;
+        }
+
+        #summary-heading {
+            font-family: 'Sora', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #4A3FA8;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #summary-heading::before {
+            content: '▪';
+            color: #7C6EE0;
+            font-size: 10px;
+        }
+
+        #Summary-text {
+            font-size: 14.5px;
+            color: #3A3360;
+            line-height: 1.75;
+            min-height: 20px;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 12px;
+            color: #ABA8C2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <div class="badge">HuggingFace Transformer</div>
+            <h1>Text <span>Summarizer</span></h1>
+            <p class="subtitle">Paste any content below and get a clean, concise summary in seconds.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <form id="Summarization-form">
+            <div>
+                <label class="field-label" for="dialogue-input">Your Content</label>
+                <textarea id="dialogue-input" placeholder="Enter or paste your content here…" required></textarea>
+            </div>
+            <button type="submit">Summarize</button>
+        </form>
+
+        <div class="summary-output">
+            <h3 id="summary-heading">Content Summary</h3>
+            <p id="Summary-text"></p>
+        </div>
+
+        <p class="footer-note">Powered by HuggingFace Transformers · NLP Project</p>
+
+    </div>
+
+    <script>
+        document.getElementById("Summarization-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const dialogueInput = document.getElementById("dialogue-input");
+            const summaryText = document.getElementById("Summary-text");
+            const submitButton = e.target.querySelector("button");
+
+            const dialogue = dialogueInput.value.trim();
+            if (!dialogue) return;
+
+            summaryText.innerText = "Processing...";
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch("/summarize/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ dialogue }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                summaryText.innerText = data.summary || "No summary returned.";
+            } catch (err) {
+                summaryText.innerText = `Error: ${err.message}`;
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+</html>
