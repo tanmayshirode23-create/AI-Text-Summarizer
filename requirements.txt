@@ -1,3 +1,4 @@
+```txt
 fastapi
 uvicorn
 transformers
@@ -6,3 +7,5 @@ pydantic
 jinja2
 python-multipart
 huggingface_hub
+sentencepiece
+```
